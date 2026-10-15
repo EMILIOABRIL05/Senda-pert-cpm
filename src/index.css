@@ -1,1 +1,163 @@
 @import "tailwindcss";
+
+/*
+ * Sistema de diseño de Senda.
+ * Los colores viven en variables CSS para poder cambiar tema (claro/oscuro)
+ * y color de acento sin tocar los componentes.
+ */
+@custom-variant dark (&:where([data-tema="oscuro"], [data-tema="oscuro"] *));
+
+:root {
+  color-scheme: light;
+  --fondo: #f5f5f7;
+  --superficie: #ffffff;
+  --superficie-2: #fafafc;
+  --superficie-3: #f0f0f3;
+  --texto: #1d1d1f;
+  --texto-2: #515154;
+  --texto-3: #6e6e73;
+  --borde: rgb(0 0 0 / 0.08);
+  --borde-fuerte: rgb(0 0 0 / 0.16);
+
+  --critico: #d70015;
+  --critico-suave: rgb(215 0 21 / 0.08);
+  --aviso: #b25000;
+  --aviso-suave: rgb(255 149 0 / 0.12);
+  --exito: #1d7a35;
+
+  --acento: #0071e3;
+  --acento-fuerte: #0062c4;
+  --acento-suave: rgb(0 113 227 / 0.1);
+  --sobre-acento: #ffffff;
+
+  --sombra: 0 1px 1px rgb(0 0 0 / 0.02), 0 6px 24px -8px rgb(0 0 0 / 0.08);
+  --sombra-elevada: 0 2px 6px rgb(0 0 0 / 0.06), 0 24px 48px -12px rgb(0 0 0 / 0.18);
+}
+
+[data-tema="oscuro"] {
+  color-scheme: dark;
+  --fondo: #000000;
+  --superficie: #161618;
+  --superficie-2: #1c1c1e;
+  --superficie-3: #232326;
+  --texto: #f5f5f7;
+  --texto-2: #c7c7cc;
+  --texto-3: #98989d;
+  --borde: rgb(255 255 255 / 0.09);
+  --borde-fuerte: rgb(255 255 255 / 0.18);
+
+  --critico: #ff5a4f;
+  --critico-suave: rgb(255 69 58 / 0.14);
+  --aviso: #ffb340;
+  --aviso-suave: rgb(255 159 10 / 0.14);
+  --exito: #32d74b;
+
+  --acento: #2997ff;
+  --acento-fuerte: #4aa8ff;
+  --acento-suave: rgb(41 151 255 / 0.16);
+  --sobre-acento: #ffffff;
+
+  --sombra: 0 0 0 1px rgb(255 255 255 / 0.04);
+  --sombra-elevada: 0 0 0 1px rgb(255 255 255 / 0.08), 0 24px 48px -12px rgb(0 0 0 / 0.6);
+}
+
+/* Colores de acento predefinidos. */
+[data-acento="indigo"] { --acento: #5856d6; --acento-fuerte: #4644c2; --acento-suave: rgb(88 86 214 / 0.1); }
+[data-tema="oscuro"][data-acento="indigo"] { --acento: #8e8cff; --acento-fuerte: #a5a3ff; --acento-suave: rgb(142 140 255 / 0.16); --sobre-acento: #0b0b2a; }
+[data-acento="verde"] { --acento: #1a7f37; --acento-fuerte: #146c2e; --acento-suave: rgb(26 127 55 / 0.1); }
+[data-tema="oscuro"][data-acento="verde"] { --acento: #30d158; --acento-fuerte: #5ee07c; --acento-suave: rgb(48 209 88 / 0.15); --sobre-acento: #04210f; }
+[data-acento="grafito"] { --acento: #3a3a3c; --acento-fuerte: #1d1d1f; --acento-suave: rgb(58 58 60 / 0.09); }
+[data-tema="oscuro"][data-acento="grafito"] { --acento: #d1d1d6; --acento-fuerte: #f2f2f7; --acento-suave: rgb(209 209 214 / 0.14); --sobre-acento: #1c1c1e; }
+
+@theme inline {
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-superficie-2: var(--superficie-2);
+  --color-superficie-3: var(--superficie-3);
+  --color-texto: var(--texto);
+  --color-texto-2: var(--texto-2);
+  --color-texto-3: var(--texto-3);
+  --color-borde: var(--borde);
+  --color-borde-fuerte: var(--borde-fuerte);
+  --color-critico: var(--critico);
+  --color-critico-suave: var(--critico-suave);
+  --color-aviso: var(--aviso);
+  --color-aviso-suave: var(--aviso-suave);
+  --color-exito: var(--exito);
+  --color-acento: var(--acento);
+  --color-acento-fuerte: var(--acento-fuerte);
+  --color-acento-suave: var(--acento-suave);
+  --color-sobre-acento: var(--sobre-acento);
+  --shadow-suave: var(--sombra);
+  --shadow-elevada: var(--sombra-elevada);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+@layer base {
+  html {
+    background: var(--fondo);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+  ::selection {
+    background: var(--acento-suave);
+  }
+  :focus-visible {
+    outline: 2px solid var(--acento);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  input, select, textarea, button {
+    font: inherit;
+    color: inherit;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Campo de texto discreto: sin borde hasta que se enfoca, como en una hoja de cálculo. */
+  .campo {
+    @apply w-full rounded-lg border border-transparent bg-transparent px-2.5 py-1.5 outline-none transition-colors;
+    @apply placeholder:text-texto-3 hover:bg-superficie-3 focus:border-acento focus:bg-superficie;
+  }
+  .campo[aria-invalid="true"] {
+    @apply border-critico/60 bg-critico-suave;
+  }
+  .campo-caja {
+    @apply w-full rounded-xl border border-borde-fuerte bg-superficie px-3 py-2 outline-none transition-colors;
+    @apply placeholder:text-texto-3 focus:border-acento focus:ring-4 focus:ring-acento-suave;
+  }
+  .numeros {
+    font-variant-numeric: tabular-nums;
+  }
+  .etiqueta {
+    @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-texto-3;
+  }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.animar-aparicion {
+  animation: aparecer 0.16s ease-out;
+}
