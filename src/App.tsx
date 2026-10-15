@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { CalculadoraPERT } from './componentes/CalculadoraPERT'
+import { BotonesExportar } from './componentes/diagramas/BotonesExportar'
 import { Visualizaciones } from './componentes/diagramas/Visualizaciones'
 import { Encabezado } from './componentes/Encabezado'
-import { IconoDocumento, IconoInfo, IconoLibro } from './componentes/iconos'
+import { IconoInfo } from './componentes/iconos'
 import { MensajesError } from './componentes/MensajesError'
+import { MenuArchivo } from './componentes/MenuArchivo'
+import { MenuEjemplos } from './componentes/MenuEjemplos'
 import { PanelProyecto } from './componentes/PanelProyecto'
 import { PasoAPaso } from './componentes/PasoAPaso'
 import { Resumen } from './componentes/Resumen'
@@ -11,10 +14,8 @@ import { TablaEntrada } from './componentes/TablaEntrada'
 import { TablaResultados } from './componentes/TablaResultados'
 import { Aviso, useAviso } from './componentes/ui/Aviso'
 import { Interruptor } from './componentes/ui/Interruptor'
-import { Menu } from './componentes/ui/Menu'
 import { Seccion } from './componentes/ui/Seccion'
 import type { Actividad, Proyecto } from './core/tipos'
-import { EJEMPLOS, proyectoEnBlanco } from './ejemplos'
 import { usePreferencias } from './estado/preferencias'
 import { useProyecto } from './estado/useProyecto'
 
@@ -23,6 +24,7 @@ export default function App() {
   const { preferencias, temaEfectivo, cambiarTema, cambiarAcento } = usePreferencias()
   const { aviso, mostrar, cerrar } = useAviso()
   const [pasoAPaso, setPasoAPaso] = useState(false)
+  const refGantt = useRef<SVGSVGElement>(null)
 
   /** Reemplaza el proyecto completo, pero deja deshacer: el trabajo del usuario nunca se pierde por un clic. */
   const reemplazarProyecto = (nuevo: Proyecto, mensaje: string) => {
@@ -40,30 +42,7 @@ export default function App() {
     })
   }
 
-  const menuEjemplos = (
-    <Menu
-      etiqueta="Cargar ejemplo"
-      disparador={
-        <>
-          <IconoLibro tamano={16} />
-          <span className="hidden sm:inline">Ejemplos</span>
-        </>
-      }
-      elementos={[
-        ...EJEMPLOS.map((ejemplo) => ({
-          etiqueta: ejemplo.titulo,
-          descripcion: ejemplo.descripcion,
-          alElegir: () => reemplazarProyecto(ejemplo.crear(), `Se cargó «${ejemplo.titulo}»`),
-        })),
-        {
-          etiqueta: 'Proyecto en blanco',
-          descripcion: 'Empezar desde cero',
-          icono: <IconoDocumento tamano={16} />,
-          alElegir: () => reemplazarProyecto(proyectoEnBlanco(), 'Nuevo proyecto en blanco'),
-        },
-      ]}
-    />
-  )
+  const avisar = (mensaje: string) => mostrar({ mensaje })
 
   return (
     <>
@@ -73,7 +52,17 @@ export default function App() {
         acento={preferencias.acento}
         onCambiarTema={cambiarTema}
         onCambiarAcento={cambiarAcento}
-        acciones={menuEjemplos}
+        acciones={
+          <>
+            <MenuEjemplos onCargar={reemplazarProyecto} />
+            <MenuArchivo
+              proyecto={proyecto}
+              analisis={analisis}
+              onImportar={(nuevo, archivo) => reemplazarProyecto(nuevo, `Se abrió «${archivo}»`)}
+              onAviso={avisar}
+            />
+          </>
+        }
       />
 
       <main className="mx-auto max-w-6xl px-4 pb-28 sm:px-6">
@@ -134,6 +123,18 @@ export default function App() {
                 actividades={analisis.actividades}
                 aoa={analisis.aoa}
                 temaOscuro={temaEfectivo === 'oscuro'}
+                refGantt={refGantt}
+                acciones={(pestana) => (
+                  <BotonesExportar
+                    pestana={pestana}
+                    nombreProyecto={proyecto.nombre}
+                    aoa={analisis.aoa}
+                    cpm={analisis.cpm}
+                    actividades={analisis.actividades}
+                    refGantt={refGantt}
+                    onError={avisar}
+                  />
+                )}
               />
             </Seccion>
           )}
@@ -141,7 +142,8 @@ export default function App() {
       </main>
 
       <footer className="border-t border-borde py-8 text-center text-xs text-texto-3">
-        Senda · Investigación Operativa — PERT, CPM, ruta crítica y diagrama de Gantt
+        Senda · Investigación Operativa — PERT, CPM, ruta crítica y diagrama de Gantt. Tus datos se guardan solo en este
+        navegador.
       </footer>
 
       <Aviso aviso={aviso} onCerrar={cerrar} />
