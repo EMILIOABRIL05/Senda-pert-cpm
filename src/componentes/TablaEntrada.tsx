@@ -81,7 +81,7 @@ export function TablaEntrada({ proyecto, errores, despachar, onEliminar }: Props
 
   return (
     <Tarjeta>
-      <div className="overflow-x-auto">
+      <div className="relative overflow-x-auto">
         <table ref={tabla} className="w-full min-w-[680px] table-fixed border-collapse text-sm">
           <caption className="sr-only">Actividades del proyecto. Enter pasa a la fila siguiente.</caption>
           <thead>

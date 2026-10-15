@@ -49,7 +49,7 @@ export function Gantt({ cpm, actividades, proyecto, refSvg }: Props) {
         <Boton variante="fantasma" tamano="sm" soloIcono aria-label="Acercar" icono={<IconoAcercar tamano={16} />} disabled={indiceZoom === ZOOMS.length - 1} onClick={() => setIndiceZoom((i) => i + 1)} />
       </div>
 
-      <div ref={contenedor} className="overflow-x-auto">
+      <div ref={contenedor} className="relative overflow-x-auto">
         <svg
           ref={refSvg}
           width={ancho}

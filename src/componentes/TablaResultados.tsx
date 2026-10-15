@@ -39,7 +39,7 @@ export function TablaResultados({ cpm, actividades, esPERT }: Props) {
 
   return (
     <Tarjeta>
-      <div className="overflow-x-auto">
+      <div className="relative overflow-x-auto">
         <table className="numeros w-full min-w-[640px] border-collapse text-sm">
           <caption className="sr-only">Tabla de tiempos del CPM con holguras y actividades críticas</caption>
           <thead>
