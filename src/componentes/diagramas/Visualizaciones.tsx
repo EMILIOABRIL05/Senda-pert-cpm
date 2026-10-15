@@ -21,11 +21,10 @@ interface Props {
   temaOscuro: boolean
   /** Botones extra de la barra (exportar), según la pestaña visible. */
   acciones?: (pestana: Pestana) => ReactNode
-  refDiagrama?: RefObject<HTMLDivElement | null>
   refGantt?: RefObject<SVGSVGElement | null>
 }
 
-export function Visualizaciones({ proyecto, cpm, actividades, aoa, temaOscuro, acciones, refDiagrama, refGantt }: Props) {
+export function Visualizaciones({ proyecto, cpm, actividades, aoa, temaOscuro, acciones, refGantt }: Props) {
   const [activa, setActiva] = useState<Pestana>('aoa')
   const botones = useRef<(HTMLButtonElement | null)[]>([])
 
@@ -72,7 +71,6 @@ export function Visualizaciones({ proyecto, cpm, actividades, aoa, temaOscuro, a
       </div>
 
       <div
-        ref={refDiagrama}
         id={`panel-${activa}`}
         role="tabpanel"
         aria-labelledby={`pestana-${activa}`}
