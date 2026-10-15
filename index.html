@@ -2,11 +2,28 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Senda · Planificador PERT-CPM</title>
+    <meta
+      name="description"
+      content="Resuelve redes PERT-CPM: tabla de tiempos, holguras, ruta crítica, red AOA con actividades ficticias, red AON y diagrama de Gantt."
+    />
+    <meta name="theme-color" content="#f5f5f7" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <script>
+      // Aplica el tema guardado antes de pintar, para evitar un destello blanco en modo oscuro.
+      try {
+        var p = JSON.parse(localStorage.getItem('senda:preferencias') || '{}')
+        var oscuro = p.tema === 'oscuro' || (p.tema !== 'claro' && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.dataset.tema = oscuro ? 'oscuro' : 'claro'
+        if (p.acento) document.documentElement.dataset.acento = p.acento
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>Senda necesita JavaScript para funcionar.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
