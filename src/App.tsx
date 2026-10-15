@@ -1,3 +1,4 @@
+import { Visualizaciones } from './componentes/diagramas/Visualizaciones'
 import { Encabezado } from './componentes/Encabezado'
 import { IconoDocumento, IconoInfo, IconoLibro } from './componentes/iconos'
 import { MensajesError } from './componentes/MensajesError'
@@ -102,6 +103,22 @@ export default function App() {
               <EstadoPendiente />
             )}
           </Seccion>
+
+          {analisis.ok && (
+            <Seccion
+              id="diagramas"
+              titulo="Diagramas"
+              descripcion="La red de flechas (como en clase), la red de nodos y el cronograma."
+            >
+              <Visualizaciones
+                proyecto={proyecto}
+                cpm={analisis.cpm}
+                actividades={analisis.actividades}
+                aoa={analisis.aoa}
+                temaOscuro={temaEfectivo === 'oscuro'}
+              />
+            </Seccion>
+          )}
         </div>
       </main>
 
