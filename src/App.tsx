@@ -1,12 +1,16 @@
+import { useState } from 'react'
+import { CalculadoraPERT } from './componentes/CalculadoraPERT'
 import { Visualizaciones } from './componentes/diagramas/Visualizaciones'
 import { Encabezado } from './componentes/Encabezado'
 import { IconoDocumento, IconoInfo, IconoLibro } from './componentes/iconos'
 import { MensajesError } from './componentes/MensajesError'
 import { PanelProyecto } from './componentes/PanelProyecto'
+import { PasoAPaso } from './componentes/PasoAPaso'
 import { Resumen } from './componentes/Resumen'
 import { TablaEntrada } from './componentes/TablaEntrada'
 import { TablaResultados } from './componentes/TablaResultados'
 import { Aviso, useAviso } from './componentes/ui/Aviso'
+import { Interruptor } from './componentes/ui/Interruptor'
 import { Menu } from './componentes/ui/Menu'
 import { Seccion } from './componentes/ui/Seccion'
 import type { Actividad, Proyecto } from './core/tipos'
@@ -18,6 +22,7 @@ export default function App() {
   const { proyecto, despachar, analisis } = useProyecto()
   const { preferencias, temaEfectivo, cambiarTema, cambiarAcento } = usePreferencias()
   const { aviso, mostrar, cerrar } = useAviso()
+  const [pasoAPaso, setPasoAPaso] = useState(false)
 
   /** Reemplaza el proyecto completo, pero deja deshacer: el trabajo del usuario nunca se pierde por un clic. */
   const reemplazarProyecto = (nuevo: Proyecto, mensaje: string) => {
@@ -93,11 +98,24 @@ export default function App() {
             {!analisis.ok && <MensajesError errores={analisis.errores} />}
           </Seccion>
 
-          <Seccion id="resultados" titulo="Resultados" descripcion="Se actualizan solos mientras editas.">
+          <Seccion
+            id="resultados"
+            titulo="Resultados"
+            descripcion="Se actualizan solos mientras editas."
+            acciones={
+              analisis.ok && (
+                <Interruptor activo={pasoAPaso} onCambio={setPasoAPaso}>
+                  Paso a paso
+                </Interruptor>
+              )
+            }
+          >
             {analisis.ok ? (
               <div className="space-y-6">
                 <Resumen proyecto={proyecto} cpm={analisis.cpm} pert={analisis.pert} aoa={analisis.aoa} />
+                {analisis.pert && <CalculadoraPERT key={analisis.pert.media} pert={analisis.pert} unidad={proyecto.unidad} />}
                 <TablaResultados cpm={analisis.cpm} actividades={analisis.actividades} esPERT={proyecto.modo === 'PERT'} />
+                {pasoAPaso && <PasoAPaso actividades={analisis.actividades} cpm={analisis.cpm} />}
               </div>
             ) : (
               <EstadoPendiente />
