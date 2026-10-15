@@ -1,14 +1,10 @@
 import { Background, Controls, Handle, MarkerType, Position, ReactFlow, type Edge, type Node, type NodeProps } from '@xyflow/react'
 import { useMemo } from 'react'
-import { formatear, iguales } from '../../core/numeros'
+import { formatear } from '../../core/numeros'
 import type { ActividadNormalizada, FilaCPM, ResultadoCPM } from '../../core/tipos'
-import { acomodar } from './acomodo'
 import { AjusteAutomatico } from './AjusteAutomatico'
+import { ALTO_CAJA as ALTO, ANCHO_CAJA as ANCHO, DIAMETRO_EXTREMO as EXTREMO, disponerAON } from './disposicion'
 import { estiloFlecha } from './estilos'
-
-const ANCHO = 156
-const ALTO = 96
-const EXTREMO = 52
 
 type NodoActividad = Node<{ fila: FilaCPM; descripcion: string }, 'actividad'>
 type NodoExtremo = Node<{ etiqueta: string }, 'extremo'>
@@ -94,47 +90,13 @@ export function RedAON({ cpm, actividades, temaOscuro }: Props) {
 }
 
 function construirElementos(cpm: ResultadoCPM, actividades: ActividadNormalizada[]) {
-  const fila = new Map(cpm.filas.map((f) => [f.nombre, f]))
-  const conSucesor = new Set(actividades.flatMap((a) => a.predecesores))
-  const enlaces: { desde: string; hasta: string; critica: boolean }[] = []
+  const { cajas, enlaces, firma } = disponerAON(cpm, actividades)
 
-  for (const a of actividades) {
-    const actual = fila.get(a.nombre) as FilaCPM
-    if (a.predecesores.length === 0) enlaces.push({ desde: 'inicio', hasta: a.nombre, critica: actual.critica && actual.ic === 0 })
-    for (const p of a.predecesores) {
-      const previa = fila.get(p) as FilaCPM
-      // La flecha es crítica solo si une dos críticas sin tiempo muerto entre ellas.
-      const critica = previa.critica && actual.critica && iguales(previa.tc, actual.ic)
-      enlaces.push({ desde: p, hasta: a.nombre, critica })
-    }
-    if (!conSucesor.has(a.nombre)) {
-      enlaces.push({ desde: a.nombre, hasta: 'fin', critica: actual.critica && iguales(actual.tc, cpm.duracion) })
-    }
-  }
-
-  const posiciones = acomodar(
-    [
-      { id: 'inicio', ancho: EXTREMO, alto: EXTREMO },
-      ...actividades.map((a) => ({ id: a.nombre, ancho: ANCHO, alto: ALTO })),
-      { id: 'fin', ancho: EXTREMO, alto: EXTREMO },
-    ],
-    enlaces,
-    { entreNodos: 30, entreNiveles: 70, entreFlechas: 20 },
+  const nodos: (NodoActividad | NodoExtremo)[] = cajas.map((caja) =>
+    caja.tipo === 'actividad'
+      ? { id: caja.id, type: 'actividad', position: { x: caja.x, y: caja.y }, data: { fila: caja.fila, descripcion: caja.descripcion } }
+      : { id: caja.id, type: 'extremo', position: { x: caja.x, y: caja.y }, data: { etiqueta: caja.etiqueta } },
   )
-  const posicion = (id: string) => posiciones.get(id) ?? { x: 0, y: 0 }
-
-  const nodos: (NodoActividad | NodoExtremo)[] = [
-    { id: 'inicio', type: 'extremo', position: posicion('inicio'), data: { etiqueta: 'Inicio' } },
-    ...actividades.map(
-      (a): NodoActividad => ({
-        id: a.nombre,
-        type: 'actividad',
-        position: posicion(a.nombre),
-        data: { fila: fila.get(a.nombre) as FilaCPM, descripcion: a.descripcion },
-      }),
-    ),
-    { id: 'fin', type: 'extremo', position: posicion('fin'), data: { etiqueta: 'Fin' } },
-  ]
 
   const aristas: Edge[] = enlaces.map((e, i) => {
     const estilo = estiloFlecha(e.critica)
@@ -148,6 +110,5 @@ function construirElementos(cpm: ResultadoCPM, actividades: ActividadNormalizada
     }
   })
 
-  const firma = enlaces.map((e) => `${e.desde}>${e.hasta}`).join('|')
   return { nodos, aristas, firma }
 }
