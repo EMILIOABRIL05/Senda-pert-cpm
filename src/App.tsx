@@ -1,7 +1,5 @@
-import { useRef, useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { CalculadoraPERT } from './componentes/CalculadoraPERT'
-import { BotonesExportar } from './componentes/diagramas/BotonesExportar'
-import { Visualizaciones } from './componentes/diagramas/Visualizaciones'
 import { Encabezado } from './componentes/Encabezado'
 import { IconoInfo } from './componentes/iconos'
 import { MensajesError } from './componentes/MensajesError'
@@ -19,12 +17,14 @@ import type { Actividad, Proyecto } from './core/tipos'
 import { usePreferencias } from './estado/preferencias'
 import { useProyecto } from './estado/useProyecto'
 
+// Los diagramas se cargan aparte para que la primera pantalla aparezca antes.
+const PanelDiagramas = lazy(() => import('./componentes/diagramas/PanelDiagramas'))
+
 export default function App() {
   const { proyecto, despachar, analisis } = useProyecto()
   const { preferencias, temaEfectivo, cambiarTema, cambiarAcento } = usePreferencias()
   const { aviso, mostrar, cerrar } = useAviso()
   const [pasoAPaso, setPasoAPaso] = useState(false)
-  const refGantt = useRef<SVGSVGElement>(null)
 
   /** Reemplaza el proyecto completo, pero deja deshacer: el trabajo del usuario nunca se pierde por un clic. */
   const reemplazarProyecto = (nuevo: Proyecto, mensaje: string) => {
@@ -117,25 +117,16 @@ export default function App() {
               titulo="Diagramas"
               descripcion="La red de flechas (como en clase), la red de nodos y el cronograma."
             >
-              <Visualizaciones
-                proyecto={proyecto}
-                cpm={analisis.cpm}
-                actividades={analisis.actividades}
-                aoa={analisis.aoa}
-                temaOscuro={temaEfectivo === 'oscuro'}
-                refGantt={refGantt}
-                acciones={(pestana) => (
-                  <BotonesExportar
-                    pestana={pestana}
-                    nombreProyecto={proyecto.nombre}
-                    aoa={analisis.aoa}
-                    cpm={analisis.cpm}
-                    actividades={analisis.actividades}
-                    refGantt={refGantt}
-                    onError={avisar}
-                  />
-                )}
-              />
+              <Suspense fallback={<div className="h-[540px] animate-pulse rounded-2xl bg-superficie-3" aria-label="Cargando diagramas" />}>
+                <PanelDiagramas
+                  proyecto={proyecto}
+                  cpm={analisis.cpm}
+                  actividades={analisis.actividades}
+                  aoa={analisis.aoa}
+                  temaOscuro={temaEfectivo === 'oscuro'}
+                  onError={avisar}
+                />
+              </Suspense>
             </Seccion>
           )}
         </div>
