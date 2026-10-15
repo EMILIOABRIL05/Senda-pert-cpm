@@ -161,3 +161,26 @@
 .animar-aparicion {
   animation: aparecer 0.16s ease-out;
 }
+
+/* Ajustes de React Flow para que siga los colores del tema. */
+.react-flow {
+  --xy-background-color: var(--superficie);
+  --xy-background-color-default: var(--superficie);
+  --xy-background-pattern-dots-color-default: var(--borde-fuerte);
+  --xy-node-background-color-default: transparent;
+  --xy-controls-button-background-color: var(--superficie);
+  --xy-controls-button-background-color-hover: var(--superficie-3);
+  --xy-controls-button-color: var(--texto-2);
+  --xy-controls-button-color-hover: var(--texto);
+  --xy-controls-button-border-color: var(--borde);
+  --xy-controls-box-shadow: var(--sombra);
+  --xy-attribution-background-color: transparent;
+}
+.react-flow__controls {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+}
+.react-flow__attribution a {
+  color: var(--texto-3);
+}
