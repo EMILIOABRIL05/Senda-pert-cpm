@@ -26,3 +26,37 @@ export function estiloFlecha(critica: boolean, ficticia = false) {
     labelBgBorderRadius: 6,
   }
 }
+
+/**
+ * Calcula la posición (x, y) de la etiqueta desplazada hacia un lado (arriba/afuera)
+ * de la curva Bézier para que el texto nunca se sobreponga encima de la línea.
+ */
+export function posicionEtiquetaFlecha(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  lx: number,
+  ly: number,
+  etiqueta: string,
+): { x: number; y: number } {
+  const dx = x2 - x1
+  const dy = y2 - y1
+  // En una curva Bézier con tangentes horizontales en los extremos, la derivada
+  // en t = 0.5 es proporcional a (0.5 * dx, 1.5 * dy).
+  const tx = 0.5 * dx
+  const ty = 1.5 * dy
+  const longitud = Math.hypot(tx, ty) || 1
+  // Vector normal unitario hacia el lado superior/exterior de la curva.
+  const nx = ty / longitud
+  const ny = -tx / longitud
+
+  const mitadAncho = (etiqueta.length * 7 + 10) / 2
+  const mitadAlto = 8
+  const separacion = Math.abs(nx) * mitadAncho + Math.abs(ny) * mitadAlto + 6
+
+  return {
+    x: lx + nx * separacion,
+    y: ly + ny * separacion,
+  }
+}

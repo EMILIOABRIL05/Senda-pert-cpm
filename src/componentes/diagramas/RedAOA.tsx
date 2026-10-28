@@ -1,10 +1,23 @@
-import { Background, Controls, Handle, MarkerType, Position, ReactFlow, type Edge, type Node, type NodeProps } from '@xyflow/react'
+import {
+  Background,
+  BaseEdge,
+  Controls,
+  getBezierPath,
+  Handle,
+  MarkerType,
+  Position,
+  ReactFlow,
+  type Edge,
+  type EdgeProps,
+  type Node,
+  type NodeProps,
+} from '@xyflow/react'
 import { useMemo } from 'react'
 import { formatear } from '../../core/numeros'
 import type { NodoAOA, RedAOA as Red } from '../../core/tipos'
 import { AjusteAutomatico } from './AjusteAutomatico'
 import { DIAMETRO_EVENTO, disponerAOA } from './disposicion'
-import { estiloFlecha } from './estilos'
+import { estiloFlecha, posicionEtiquetaFlecha } from './estilos'
 
 type NodoEvento = Node<{ evento: NodoAOA; critico: boolean }, 'evento'>
 
@@ -36,6 +49,50 @@ function Evento({ data }: NodeProps<NodoEvento>) {
 
 const TIPOS_NODO = { evento: Evento }
 
+function FlechaAOA({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style,
+  markerEnd,
+  label,
+  labelStyle,
+}: EdgeProps) {
+  const [ruta, lx, ly] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  })
+  const texto = typeof label === 'string' ? label : ''
+  const pos = posicionEtiquetaFlecha(sourceX, sourceY, targetX, targetY, lx, ly, texto)
+
+  return (
+    <>
+      <BaseEdge path={ruta} style={style} markerEnd={markerEnd} />
+      {texto && (
+        <text
+          x={pos.x}
+          y={pos.y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          style={labelStyle}
+          className="pointer-events-none select-none"
+        >
+          {texto}
+        </text>
+      )}
+    </>
+  )
+}
+
+const TIPOS_ARISTA = { flechaAOA: FlechaAOA }
+
 export function RedAOA({ red, temaOscuro }: { red: Red; temaOscuro: boolean }) {
   const { nodos, aristas, firma } = useMemo(() => construirElementos(red), [red])
 
@@ -45,6 +102,7 @@ export function RedAOA({ red, temaOscuro }: { red: Red; temaOscuro: boolean }) {
       nodes={nodos}
       edges={aristas}
       nodeTypes={TIPOS_NODO}
+      edgeTypes={TIPOS_ARISTA}
       colorMode={temaOscuro ? 'dark' : 'light'}
       fitView
       fitViewOptions={{ padding: 0.15, maxZoom: 1.3 }}
@@ -77,7 +135,7 @@ function construirElementos(red: Red) {
       id: `f${i}`,
       source: String(f.desde),
       target: String(f.hasta),
-      type: 'default',
+      type: 'flechaAOA',
       label: etiquetaFlecha(f),
       ariaLabel: f.ficticia
         ? `Actividad ficticia del evento ${f.desde} al ${f.hasta}`

@@ -12,6 +12,7 @@ import {
   disponerAOA,
   disponerAON,
 } from '../componentes/diagramas/disposicion'
+import { posicionEtiquetaFlecha } from '../componentes/diagramas/estilos'
 import { formatear } from '../core/numeros'
 import type { ActividadNormalizada, RedAOA, ResultadoCPM } from '../core/tipos'
 
@@ -62,10 +63,10 @@ interface Flecha {
   color: string
   grosor: number
   punteada: boolean
-  etiqueta?: { contenido: string; color: string; negrita: boolean }
+  etiqueta?: { contenido: string; color: string; negrita: boolean; cursiva?: boolean }
 }
 
-function dibujarFlecha(f: Flecha, idMarcador: string, paleta: Paleta): string {
+function dibujarFlecha(f: Flecha, idMarcador: string): string {
   const [ruta, lx, ly] = getBezierPath({
     sourceX: f.x1,
     sourceY: f.y1,
@@ -76,9 +77,13 @@ function dibujarFlecha(f: Flecha, idMarcador: string, paleta: Paleta): string {
   })
   let svg = `<path d="${ruta}" fill="none" stroke="${f.color}" stroke-width="${f.grosor}" ${f.punteada ? 'stroke-dasharray="6 5"' : ''} marker-end="url(#${idMarcador})"/>`
   if (f.etiqueta) {
-    const ancho = f.etiqueta.contenido.length * 7 + 14
-    svg += `<rect x="${lx - ancho / 2}" y="${ly - 10}" width="${ancho}" height="20" rx="6" fill="${paleta.superficie}" fill-opacity="0.92"/>`
-    svg += texto(lx, ly + 4, f.etiqueta.contenido, `text-anchor="middle" font-size="12" fill="${f.etiqueta.color}" font-weight="${f.etiqueta.negrita ? 700 : 500}"`)
+    const pos = posicionEtiquetaFlecha(f.x1, f.y1, f.x2, f.y2, lx, ly, f.etiqueta.contenido)
+    svg += texto(
+      pos.x,
+      pos.y + 4,
+      f.etiqueta.contenido,
+      `text-anchor="middle" font-size="12" fill="${f.etiqueta.color}" ${f.etiqueta.cursiva ? 'font-style="italic"' : ''} font-weight="${f.etiqueta.negrita ? 700 : 500}"`,
+    )
   }
   return svg
 }
@@ -122,10 +127,10 @@ export function svgRedAOA(red: RedAOA, paleta: Paleta): SVGSVGElement {
             contenido: f.ficticia ? 'ficticia' : `${f.actividad} = ${formatear(f.duracion)}`,
             color: f.critica ? paleta.critico : f.ficticia ? paleta.texto3 : paleta.texto,
             negrita: f.critica,
+            cursiva: f.ficticia,
           },
         },
         marcador,
-        paleta,
       )
     })
     .join('')
@@ -172,7 +177,6 @@ export function svgRedAON(cpm: ResultadoCPM, actividades: ActividadNormalizada[]
           punteada: false,
         },
         e.critica ? 'm-critica' : 'm-normal',
-        paleta,
       )
     })
     .join('')
