@@ -19,7 +19,7 @@
 
 Escribes las actividades de un proyecto con sus predecesores y su duración, y Senda calcula y dibuja todo mientras escribes:
 
-- **Tabla de resultados** con notación académica ($E_i$, $L_j$, holgura $h = L_j - E_i - d_{ij}$ y estado), incluyendo las **actividades ficticias** (`Ficticia 1`, `Ficticia 2`...) sin marcarlas como parte de la ruta crítica.
+- **Tabla de resultados** con notación académica ($E_i$, $L_j$, holgura $H = L_j - E_i - d_{ij}$ y estado), incluyendo las **actividades ficticias** (`Ficticia 1`, `Ficticia 2`...) sin marcarlas como parte de la ruta crítica.
 - **Ruta crítica**. Si hay varias, las muestra todas (por ejemplo, A‑C‑E y B‑D‑E).
 - **Red AOA** (actividades en las flechas), la representación que se usa en clase: eventos numerados con su TE y TL, y **actividades ficticias** punteadas cuando hacen falta.
 - **Red AON** (actividades en los nodos), con cada caja en el formato de los libros de texto.
@@ -42,14 +42,14 @@ Además se guarda sola en el navegador, se instala como app en el celular, funci
 |---|---|
 | Tiempo más temprano del evento inicial ($E_i$ / IC) | $E_j = \max(E_i + d_{ij})$, con $E_1 = 0$ |
 | Tiempo más tardío del evento final ($L_j$ / TL) | $L_i = \min(L_j - d_{ij})$, con $L_n = E_n$ |
-| Holgura total ($h$) | $h = L_j - E_i - d_{ij}$ |
+| Holgura total ($H$) | $H = L_j - E_i - d_{ij}$ |
 | Holgura libre (HL) | $\text{HL} = \min(\text{IC de los sucesores}) - \text{TC}$ |
 | Tiempo esperado (PERT) | $t_e = (a + 4m + b) / 6$ |
 | Varianza (PERT) | $\sigma^2 = ((b - a) / 6)^2$ |
 | Probabilidad de un plazo $T$ | $Z = (T - T_e) / \sigma,\quad P = \Phi(Z)$ |
 | Plazo inverso para confianza $P$ | $T = T_e + Z \cdot \sigma,\quad Z = \Phi^{-1}(P)$ |
 
-Una actividad real es crítica cuando su holgura $h$ es 0 (se compara con una tolerancia de $10^{-9}$ por los decimales de PERT). Las actividades ficticias ($d_{ij} = 0$) se muestran en la tabla de resultados con su propio $E_i$, $L_j$ y $h = L_j - E_i$, pero no forman parte de la lista de actividades de la ruta crítica. Si hay varias rutas críticas, la varianza del proyecto se toma de la de **mayor varianza** (criterio conservador), y la app lo indica explícitamente.
+Una actividad real es crítica cuando su holgura $H$ es 0 (se compara con una tolerancia de $10^{-9}$ por los decimales de PERT). Las actividades ficticias ($d_{ij} = 0$) se muestran en la tabla de resultados con su propio $E_i$, $L_j$ y $H = L_j - E_i$, pero no forman parte de la lista de actividades de la ruta crítica. Si hay varias rutas críticas, la varianza del proyecto se toma de la de **mayor varianza** (criterio conservador), y la app lo indica explícitamente.
 
 Para consultar la solución manual completa, los casos de prueba verificados, la matriz de contrastación y la guía del informe académico APA 7, revisa [`docs/INFORME_ACADEMICO_Y_AUDITORIA.md`](docs/INFORME_ACADEMICO_Y_AUDITORIA.md).
 

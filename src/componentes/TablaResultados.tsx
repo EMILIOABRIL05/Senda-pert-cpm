@@ -29,7 +29,7 @@ const COLUMNA_DURACION: Columna = { titulo: 'Duración', ayuda: 'Duración de la
 const COLUMNAS_TIEMPOS: Columna[] = [
   { titulo: 'Ei', ayuda: 'Tiempo más temprano del evento inicial (inicio más cercano)', valor: (f) => formatear(f.ic) },
   { titulo: 'Lj', ayuda: 'Tiempo más tardío del evento final (terminación más lejana)', valor: (f) => formatear(f.tl) },
-  { titulo: 'h', ayuda: 'Holgura de la actividad: Lj − Ei − duración', valor: (f) => formatear(f.holguraTotal) },
+  { titulo: 'H', ayuda: 'Holgura de la actividad: Lj − Ei − duración', valor: (f) => formatear(f.holguraTotal) },
 ]
 
 export function TablaResultados({ cpm, aoa, actividades, esPERT }: Props) {
@@ -78,8 +78,8 @@ export function TablaResultados({ cpm, aoa, actividades, esPERT }: Props) {
                     <td
                       key={c.titulo}
                       className={`px-3 py-2.5 text-right ${
-                        c.titulo === 'h' && fila.critica ? 'text-critico' : ''
-                      } ${c.titulo === 'h' ? 'font-semibold' : ''}`}
+                        c.titulo === 'H' && fila.critica ? 'text-critico' : ''
+                      } ${c.titulo === 'H' ? 'font-semibold' : ''}`}
                     >
                       {c.valor(fila, actividad)}
                     </td>
@@ -103,7 +103,7 @@ export function TablaResultados({ cpm, aoa, actividades, esPERT }: Props) {
         </table>
       </div>
       <p className="border-t border-borde bg-superficie-2 px-6 py-3 text-xs leading-relaxed text-texto-3">
-        Ei: tiempo más temprano de inicio · Lj: tiempo más tardío de terminación · h: holgura (Lj − Ei − duración). Una
+        Ei: tiempo más temprano de inicio · Lj: tiempo más tardío de terminación · H: holgura (Lj − Ei − duración). Una
         actividad es crítica cuando su holgura es 0.
       </p>
     </Tarjeta>

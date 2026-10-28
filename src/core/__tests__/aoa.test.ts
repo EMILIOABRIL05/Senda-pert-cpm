@@ -92,7 +92,7 @@ describe('Red AOA — casos de clase', () => {
     expectPrecedenciasEquivalentes(CASO_3)
   })
 
-  it('filasResultadosAOA incluye Ficticia 1 con Ei, Lj, h = Lj − Ei y sin marcarla como crítica', () => {
+  it('filasResultadosAOA incluye Ficticia 1 con Ei, Lj, H = Lj − Ei y sin marcarla como crítica', () => {
     const { red, cpm } = redDe(CASO_1)
     const filas = filasResultadosAOA(cpm, red)
     expect(filas.map((f) => [f.nombre, f.duracion, f.ic, f.tl, f.holguraTotal, f.critica])).toEqual([

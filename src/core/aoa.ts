@@ -279,7 +279,7 @@ export function precedenciasDeAOA(red: RedAOA): Map<string, Set<string>> {
  * Construye las filas completas para la tabla de resultados combinando las
  * actividades reales con las actividades ficticias de la red AOA (Ficticia 1,
  * Ficticia 2...), calculando Ei (TE del nodo inicial), Lj (TL del nodo final)
- * y h = Lj − Ei − duración. Las ficticias se incluyen con fines académicos
+ * y H = Lj − Ei − duración. Las ficticias se incluyen con fines académicos
  * sin marcarse como parte de la ruta crítica.
  */
 export function filasResultadosAOA(cpm: ResultadoCPM, aoa: RedAOA): FilaCPM[] {
@@ -289,7 +289,7 @@ export function filasResultadosAOA(cpm: ResultadoCPM, aoa: RedAOA): FilaCPM[] {
     .map((f, i): FilaCPM => {
       const ei = nodosPorId.get(f.desde)?.te ?? 0
       const lj = nodosPorId.get(f.hasta)?.tl ?? 0
-      const h = iguales(lj - ei, 0) ? 0 : lj - ei
+      const H = iguales(lj - ei, 0) ? 0 : lj - ei
       return {
         nombre: `Ficticia ${i + 1}`,
         duracion: 0,
@@ -297,7 +297,7 @@ export function filasResultadosAOA(cpm: ResultadoCPM, aoa: RedAOA): FilaCPM[] {
         tc: ei,
         il: lj,
         tl: lj,
-        holguraTotal: h,
+        holguraTotal: H,
         holguraLibre: 0,
         critica: false,
         origenIC: null,

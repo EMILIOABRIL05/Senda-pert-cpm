@@ -37,7 +37,7 @@ export async function exportarExcel({ proyecto, actividades, cpm, pert, aoa }: D
         : { Duración: r(f.duracion) }),
       Ei: r(f.ic),
       Lj: r(f.tl),
-      h: r(f.holguraTotal),
+      H: r(f.holguraTotal),
       Estado: f.critica ? 'Crítica' : `Holgura de ${r(f.holguraTotal)}`,
     }
   })

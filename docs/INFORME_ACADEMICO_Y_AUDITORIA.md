@@ -14,10 +14,10 @@
 | Tarea | Estado | Archivos afectados | Pruebas | Observaciones |
 |---|---|---|---|---|
 | Auditoría | Verificado | Repositorio completo (`src/`, `README.md`) | `npm test` (97/97) | Se verificó el motor matemático CPM, PERT, distribución normal y red AOA. |
-| Notación CPM | Verificado | `src/core/aoa.ts`, `src/componentes/TablaResultados.tsx`, `src/App.tsx` | `src/core/__tests__/aoa.test.ts` | Tabla de resultados actualizada con `Actividad`, `Duración`, `Ei`, `Lj`, `h`, `Estado` e inclusión de `Ficticia 1, Ficticia 2...` sin marcarlas como ruta crítica. |
-| Notación PERT | Verificado | `src/componentes/TablaResultados.tsx`, `src/exportar/excel.ts` | `src/core/__tests__/pert.test.ts` | Presenta `a`, `m`, `b`, `te`, `σ²`, `Ei`, `Lj`, `h`, `Estado` conforme a Taha (2017). |
+| Notación CPM | Verificado | `src/core/aoa.ts`, `src/componentes/TablaResultados.tsx`, `src/App.tsx` | `src/core/__tests__/aoa.test.ts` | Tabla de resultados actualizada con `Actividad`, `Duración`, `Ei`, `Lj`, `H`, `Estado` e inclusión de `Ficticia 1, Ficticia 2...` sin marcarlas como ruta crítica. |
+| Notación PERT | Verificado | `src/componentes/TablaResultados.tsx`, `src/exportar/excel.ts` | `src/core/__tests__/pert.test.ts` | Presenta `a`, `m`, `b`, `te`, `σ²`, `Ei`, `Lj`, `H`, `Estado` conforme a Taha (2017). |
 | Cálculo Z | Verificado | `src/core/pert.ts`, `src/core/normal.ts`, `src/componentes/CalculadoraPERT.tsx` | `src/core/__tests__/pert.test.ts` | Cálculo directo $Z = (T - T_e)/\sigma$, inverso $T = T_e + Z\cdot\sigma$, y manejo seguro de $\sigma = 0$. |
-| Exportaciones | Verificado | `src/exportar/excel.ts`, `src/componentes/MenuArchivo.tsx` | `npm run build` | Exportación a Excel sincronizada con las columnas `Ei`, `Lj`, `h` y las actividades ficticias. |
+| Exportaciones | Verificado | `src/exportar/excel.ts`, `src/componentes/MenuArchivo.tsx` | `npm run build` | Exportación a Excel sincronizada con las columnas `Ei`, `Lj`, `H` y las actividades ficticias. |
 | Corrección UI Interruptor | Verificado | `src/componentes/ui/Interruptor.tsx` | `npm run build` | Corrección de posicionamiento (`left-0` y `shrink-0`) para evitar superposición del círculo sobre el texto «Paso a paso». |
 | Casos académicos y solución manual | Verificado | `docs/INFORME_ACADEMICO_Y_AUDITORIA.md`, `src/core/__tests__/` | `npm test` | Tres casos experimentales documentados y contrastados con solución analítica paso a paso. |
 | Informe APA y presentación | Verificado | `docs/INFORME_ACADEMICO_Y_AUDITORIA.md` | Revisión documental | Guía estructurada con las 12 secciones APA 7, declaración de IA y estructura de exposición. |
@@ -29,12 +29,12 @@
 | Requisito del docente | Estado | Evidencia | Problema detectado | Acción necesaria |
 |---|---|---|---|---|
 | Ingreso y validación de actividades, predecesores, duraciones y ciclos | Cumple | `src/core/validacion.ts`, `src/core/__tests__/validacion.test.ts` (17 pruebas) | Ninguno; detecta ciclos, nombres duplicados, predecesores inexistentes y $a \le m \le b$. | Mantener sin cambios. |
-| Tabla de resultados CPM con notación de clase ($E_i, L_j, h$) y actividades ficticias | Cumple | `src/componentes/TablaResultados.tsx`, `src/core/aoa.ts` (`filasResultadosAOA`) | Antes mostraba `IC, TC, IL, TL, HT, HL` y omitía las actividades ficticias en la tabla. | Corregido: muestra `Actividad`, `Duración`, `Ei`, `Lj`, `h`, `Estado` e incluye `Ficticia 1, Ficticia 2...` como no críticas. |
-| Tabla de resultados PERT según Taha ($a, m, b, t_e, \sigma^2, E_i, L_j, h$) | Cumple | `src/componentes/TablaResultados.tsx`, `src/core/pert.ts` | Requería unificar las columnas de tiempos con `Ei`, `Lj`, `h` e incluir las ficticias. | Corregido en `TablaResultados.tsx` y `excel.ts`. |
+| Tabla de resultados CPM con notación de clase ($E_i, L_j, H$) y actividades ficticias | Cumple | `src/componentes/TablaResultados.tsx`, `src/core/aoa.ts` (`filasResultadosAOA`) | Antes mostraba `IC, TC, IL, TL, HT, HL` y omitía las actividades ficticias en la tabla. | Corregido: muestra `Actividad`, `Duración`, `Ei`, `Lj`, `H`, `Estado` e incluye `Ficticia 1, Ficticia 2...` como no críticas. |
+| Tabla de resultados PERT según Taha ($a, m, b, t_e, \sigma^2, E_i, L_j, H$) | Cumple | `src/componentes/TablaResultados.tsx`, `src/core/pert.ts` | Requería unificar las columnas de tiempos con `Ei`, `Lj`, `H` e incluir las ficticias. | Corregido en `TablaResultados.tsx` y `excel.ts`. |
 | Construcción de red AOA con actividades ficticias y preservación de precedencias | Cumple | `src/core/aoa.ts`, `src/core/__tests__/aoa.test.ts` (pruebas en casos de clase + 300 redes aleatorias) | Ninguno en el algoritmo; preserva exactamente el cierre transitivo. | Se añadió prueba unitaria para `filasResultadosAOA`. |
 | Cálculo probabilístico PERT ($Z$, $\Phi(Z)$, plazo inverso y caso $\sigma = 0$) | Cumple | `src/core/pert.ts`, `src/core/normal.ts`, `src/componentes/CalculadoraPERT.tsx` | Ninguno; maneja $\sigma < 10^{-9}$ sin división por cero y múltiples rutas críticas eligiendo la de mayor varianza. | Documentado en el análisis crítico y en el informe. |
 | Coherencia visual del interruptor «Paso a paso» | Cumple | `src/componentes/ui/Interruptor.tsx` | El círculo blanco carecía de `left-0` y se desplazaba sobre el texto «Paso a paso». | Corregido con `left-0` y `shrink-0`. |
-| Coherencia entre interfaz y exportación a Excel | Cumple | `src/exportar/excel.ts`, `src/componentes/MenuArchivo.tsx` | Excel exportaba los encabezados antiguos sin las actividades ficticias. | Corregido para exportar `Ei`, `Lj`, `h`, `Estado` y las actividades ficticias. |
+| Coherencia entre interfaz y exportación a Excel | Cumple | `src/exportar/excel.ts`, `src/componentes/MenuArchivo.tsx` | Excel exportaba los encabezados antiguos sin las actividades ficticias. | Corregido para exportar `Ei`, `Lj`, `H`, `Estado` y las actividades ficticias. |
 | Solución manual analítica paso a paso | Cumple | Sección 3 (Paso 3) de este documento | Faltaba documentar las sustituciones manuales completas para el informe. | Documentado paso a paso en este archivo; el equipo debe transcribirlo/validarlo en su entrega final. |
 | Tres casos experimentales y matriz de contrastación | Cumple | Sección 3 (Pasos 5 y 6) de este documento y suite Vitest | Faltaba la matriz formal comparando resultado manual vs. resultado de Senda. | Completado con valores reales verificados y diferencia `0`. |
 | Informe final en Word (APA 7, 12 secciones) y presentación formal | Cumple parcialmente | Sección 4 y Sección 5 de este documento | La redacción del documento `.docx` con editor de ecuaciones de Word y la defensa oral dependen del equipo. | Se entrega la estructura completa de las 12 secciones, ecuaciones numeradas y declaración de IA lista para pasar a Word. |
@@ -71,12 +71,12 @@ Sea $G = (V, A)$ una red de proyecto en representación de actividades en las fl
    $$L_i = \min_{j \in S(i)} \{ L_j - d_{ij} \}, \quad i = n-1, \dots, 1 \tag{4}$$
    donde $S(i)$ es el conjunto de eventos finales de las flechas que salen del evento $i$.
 
-3. **Holgura total de cada actividad ($h$ o $H_{ij}$):**
-   $$h_{ij} = L_j - E_i - d_{ij} \tag{5}$$
+3. **Holgura total de cada actividad ($H$ o $H_{ij}$):**
+   $$H_{ij} = L_j - E_i - d_{ij} \tag{5}$$
 
 4. **Condición de criticidad y actividades ficticias:**
-   - Una actividad **real** es crítica si y solo si $h_{ij} = 0$. Una **ruta crítica** es una cadena continua de actividades críticas desde el evento inicial hasta el evento final cuya suma de duraciones es igual a $E_n$.
-   - Una **actividad ficticia** tiene duración $d_{ij} = 0$ y se introduce exclusivamente para preservar relaciones de precedencia o evitar flechas paralelas entre el mismo par de eventos $(i, j)$. Su holgura se calcula como $h_{ij} = L_j - E_i$, pero por definición no es una tarea física y no se incluye como actividad de la ruta crítica.
+   - Una actividad **real** es crítica si y solo si $H_{ij} = 0$. Una **ruta crítica** es una cadena continua de actividades críticas desde el evento inicial hasta el evento final cuya suma de duraciones es igual a $E_n$.
+   - Una **actividad ficticia** tiene duración $d_{ij} = 0$ y se introduce exclusivamente para preservar relaciones de precedencia o evitar flechas paralelas entre el mismo par de eventos $(i, j)$. Su holgura se calcula como $H_{ij} = L_j - E_i$, pero por definición no es una tarea física y no se incluye como actividad de la ruta crítica.
 
 5. **Extensión probabilística PERT:**
    Para cada actividad con tiempo optimista $a$, más probable $m$ y pesimista $b$ ($a \le m \le b$):
@@ -124,12 +124,12 @@ $\Rightarrow$ **Duración del proyecto:** $12$ días.
 - Evento 2: $L_2 = \min\{ L_4 - d_B,\; L_3 - d_C \} = \min\{ 7 - 4,\; 7 - 2 \} = \min\{3, 5\} = 3$
 - Evento 1: $L_1 = L_2 - d_A = 3 - 3 = 0$
 
-**Cálculo de holguras ($h = L_j - E_i - d_{ij}$):**
-- $A\;(1 \to 2)$: $E_1 = 0,\; L_2 = 3,\; d = 3 \implies h_A = 3 - 0 - 3 = 0$ (**Crítica**)
-- $B\;(2 \to 4)$: $E_2 = 3,\; L_4 = 7,\; d = 4 \implies h_B = 7 - 3 - 4 = 0$ (**Crítica**)
-- $C\;(2 \to 3)$: $E_2 = 3,\; L_3 = 7,\; d = 2 \implies h_C = 7 - 3 - 2 = 2$ (Holgura de 2)
-- $D\;(4 \to 5)$: $E_4 = 7,\; L_5 = 12,\; d = 5 \implies h_D = 12 - 7 - 5 = 0$ (**Crítica**)
-- $\text{Ficticia 1}\;(3 \to 4)$: $E_3 = 5,\; L_4 = 7,\; d = 0 \implies h_{\text{Ficticia 1}} = 7 - 5 - 0 = 2$ (Holgura de 2, no forma parte de la ruta crítica)
+**Cálculo de holguras ($H = L_j - E_i - d_{ij}$):**
+- $A\;(1 \to 2)$: $E_1 = 0,\; L_2 = 3,\; d = 3 \implies H_A = 3 - 0 - 3 = 0$ (**Crítica**)
+- $B\;(2 \to 4)$: $E_2 = 3,\; L_4 = 7,\; d = 4 \implies H_B = 7 - 3 - 4 = 0$ (**Crítica**)
+- $C\;(2 \to 3)$: $E_2 = 3,\; L_3 = 7,\; d = 2 \implies H_C = 7 - 3 - 2 = 2$ (Holgura de 2)
+- $D\;(4 \to 5)$: $E_4 = 7,\; L_5 = 12,\; d = 5 \implies H_D = 12 - 7 - 5 = 0$ (**Crítica**)
+- $\text{Ficticia 1}\;(3 \to 4)$: $E_3 = 5,\; L_4 = 7,\; d = 0 \implies H_{\text{Ficticia 1}} = 7 - 5 - 0 = 2$ (Holgura de 2, no forma parte de la ruta crítica)
 
 **Ruta crítica:** $A \to B \to D$ (duración = $3 + 4 + 5 = 12$ días).
 
@@ -201,7 +201,7 @@ Todos los cálculos anteriores fueron ejecutados en Senda y verificados mediante
 |---|---|---|---|---|---|
 | 1 (CPM con ficticia) | Duración total ($E_5$) | `12` | `12` | `0` | Verificado |
 | 1 (CPM con ficticia) | Ruta crítica | `A → B → D` | `A → B → D` | `0` | Verificado |
-| 1 (CPM con ficticia) | Tabla $E_i, L_j, h$ de `Ficticia 1` | $E_3 = 5, L_4 = 7, h = 2$ (No crítica) | $E_i = 5, L_j = 7, h = 2$ (Holgura de 2) | `0` | Verificado |
+| 1 (CPM con ficticia) | Tabla $E_i, L_j, H$ de `Ficticia 1` | $E_3 = 5, L_4 = 7, H = 2$ (No crítica) | $E_i = 5, L_j = 7, H = 2$ (Holgura de 2) | `0` | Verificado |
 | 2 (Paralelas / Traslape) | Holguras Caso Traslape ($A, B, C, D, \text{Ficticia 1}$) | $0, 1, 0, 1, 2$ | $0, 1, 0, 1, 2$ | `0` | Verificado |
 | 2 (Paralelas / Traslape) | Red AOA y equivalencia de precedencias | 4 eventos, 1 ficticia, precedencias exactas | 4 eventos, 1 ficticia, precedencias exactas | `0` | Verificado |
 | 3 (PERT «Lanzamiento de una app») | Tiempo esperado ($T_e$) | `31.8333` | `31.8333` | `< 10⁻⁴` | Verificado |
