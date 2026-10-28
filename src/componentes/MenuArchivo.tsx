@@ -33,7 +33,13 @@ export function MenuArchivo({ proyecto, analisis, onImportar, onAviso }: Props) 
       return
     }
     try {
-      await exportarExcel({ proyecto, actividades: analisis.actividades, cpm: analisis.cpm, pert: analisis.pert })
+      await exportarExcel({
+        proyecto,
+        actividades: analisis.actividades,
+        cpm: analisis.cpm,
+        pert: analisis.pert,
+        aoa: analisis.aoa,
+      })
     } catch {
       onAviso('No se pudo generar el archivo de Excel.')
     }

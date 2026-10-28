@@ -17,7 +17,7 @@
  */
 import { reduccionTransitiva } from './grafo'
 import { iguales } from './numeros'
-import type { ActividadNormalizada, FlechaAOA, NodoAOA, RedAOA, ResultadoCPM } from './tipos'
+import type { ActividadNormalizada, FilaCPM, FlechaAOA, NodoAOA, RedAOA, ResultadoCPM } from './tipos'
 
 interface Arista {
   desde: number
@@ -274,3 +274,36 @@ export function precedenciasDeAOA(red: RedAOA): Map<string, Set<string>> {
   }
   return resultado
 }
+
+/**
+ * Construye las filas completas para la tabla de resultados combinando las
+ * actividades reales con las actividades ficticias de la red AOA (Ficticia 1,
+ * Ficticia 2...), calculando Ei (TE del nodo inicial), Lj (TL del nodo final)
+ * y h = Lj − Ei − duración. Las ficticias se incluyen con fines académicos
+ * sin marcarse como parte de la ruta crítica.
+ */
+export function filasResultadosAOA(cpm: ResultadoCPM, aoa: RedAOA): FilaCPM[] {
+  const nodosPorId = new Map(aoa.nodos.map((n) => [n.id, n]))
+  const ficticias = aoa.flechas
+    .filter((f) => f.ficticia)
+    .map((f, i): FilaCPM => {
+      const ei = nodosPorId.get(f.desde)?.te ?? 0
+      const lj = nodosPorId.get(f.hasta)?.tl ?? 0
+      const h = iguales(lj - ei, 0) ? 0 : lj - ei
+      return {
+        nombre: `Ficticia ${i + 1}`,
+        duracion: 0,
+        ic: ei,
+        tc: ei,
+        il: lj,
+        tl: lj,
+        holguraTotal: h,
+        holguraLibre: 0,
+        critica: false,
+        origenIC: null,
+        destinoTL: null,
+      }
+    })
+  return [...cpm.filas, ...ficticias]
+}
+

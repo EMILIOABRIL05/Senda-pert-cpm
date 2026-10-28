@@ -103,7 +103,12 @@ export default function App() {
               <div className="space-y-6">
                 <Resumen proyecto={proyecto} cpm={analisis.cpm} pert={analisis.pert} aoa={analisis.aoa} />
                 {analisis.pert && <CalculadoraPERT key={analisis.pert.media} pert={analisis.pert} unidad={proyecto.unidad} />}
-                <TablaResultados cpm={analisis.cpm} actividades={analisis.actividades} esPERT={proyecto.modo === 'PERT'} />
+                <TablaResultados
+                  cpm={analisis.cpm}
+                  aoa={analisis.aoa}
+                  actividades={analisis.actividades}
+                  esPERT={proyecto.modo === 'PERT'}
+                />
                 {pasoAPaso && <PasoAPaso actividades={analisis.actividades} cpm={analisis.cpm} />}
               </div>
             ) : (

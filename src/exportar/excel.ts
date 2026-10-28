@@ -1,5 +1,6 @@
+import { filasResultadosAOA } from '../core/aoa'
 import { redondear } from '../core/numeros'
-import type { ActividadNormalizada, Proyecto, ResultadoCPM, ResultadoPERT } from '../core/tipos'
+import type { ActividadNormalizada, Proyecto, RedAOA, ResultadoCPM, ResultadoPERT } from '../core/tipos'
 import { nombreSeguro } from './archivos'
 
 interface Datos {
@@ -7,30 +8,37 @@ interface Datos {
   actividades: ActividadNormalizada[]
   cpm: ResultadoCPM
   pert: ResultadoPERT | null
+  aoa: RedAOA
 }
 
 /** Exporta la tabla de resultados y un resumen a un libro de Excel con dos hojas. */
-export async function exportarExcel({ proyecto, actividades, cpm, pert }: Datos): Promise<void> {
+export async function exportarExcel({ proyecto, actividades, cpm, pert, aoa }: Datos): Promise<void> {
   // Se carga bajo demanda: SheetJS pesa y solo se necesita al exportar.
   const XLSX = await import('xlsx')
   const porNombre = new Map(actividades.map((a) => [a.nombre, a]))
   const r = (n: number) => redondear(n, 4)
+  const esPERT = proyecto.modo === 'PERT'
 
-  const filas = cpm.filas.map((f) => {
+  const filas = filasResultadosAOA(cpm, aoa).map((f) => {
     const a = porNombre.get(f.nombre)
     const tiempos = a?.tiempos
     return {
       Actividad: f.nombre,
       Descripción: a?.descripcion ?? '',
       Predecesores: a?.predecesores.join(', ') ?? '',
-      ...(tiempos ? { a: tiempos.a, m: tiempos.m, b: tiempos.b, te: r(f.duracion), 'σ²': r(tiempos.varianza) } : { Duración: r(f.duracion) }),
-      IC: r(f.ic),
-      TC: r(f.tc),
-      IL: r(f.il),
-      TL: r(f.tl),
-      'Holgura total': r(f.holguraTotal),
-      'Holgura libre': r(f.holguraLibre),
-      Crítica: f.critica ? 'Sí' : 'No',
+      ...(esPERT
+        ? {
+            a: tiempos?.a ?? 0,
+            m: tiempos?.m ?? 0,
+            b: tiempos?.b ?? 0,
+            te: r(f.duracion),
+            'σ²': r(tiempos?.varianza ?? 0),
+          }
+        : { Duración: r(f.duracion) }),
+      Ei: r(f.ic),
+      Lj: r(f.tl),
+      h: r(f.holguraTotal),
+      Estado: f.critica ? 'Crítica' : `Holgura de ${r(f.holguraTotal)}`,
     }
   })
 

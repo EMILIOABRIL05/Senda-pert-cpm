@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { construirRedAOA, precedenciasDeAOA } from '../aoa'
+import { construirRedAOA, filasResultadosAOA, precedenciasDeAOA } from '../aoa'
 import { calcularCPM } from '../cpm'
 import { cierreTransitivo } from '../grafo'
 import type { Proyecto, RedAOA } from '../tipos'
@@ -90,6 +90,18 @@ describe('Red AOA — casos de clase', () => {
     expect(red.ficticias).toBeGreaterThanOrEqual(1)
     expectRedBienFormada(red, actividades.map((a) => a.nombre), cpm.duracion)
     expectPrecedenciasEquivalentes(CASO_3)
+  })
+
+  it('filasResultadosAOA incluye Ficticia 1 con Ei, Lj, h = Lj − Ei y sin marcarla como crítica', () => {
+    const { red, cpm } = redDe(CASO_1)
+    const filas = filasResultadosAOA(cpm, red)
+    expect(filas.map((f) => [f.nombre, f.duracion, f.ic, f.tl, f.holguraTotal, f.critica])).toEqual([
+      ['A', 3, 0, 3, 0, true],
+      ['B', 4, 3, 7, 0, true],
+      ['C', 2, 3, 7, 2, false],
+      ['D', 5, 7, 12, 0, true],
+      ['Ficticia 1', 0, 5, 7, 2, false],
+    ])
   })
 })
 
